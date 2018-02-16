@@ -3,9 +3,10 @@ background_image_filename = 'img/bluecreep.png'
 import pygame,math
 from pygame.locals import *
 from sys import exit
+import numpy as np
 
 pygame.init()
-screen = pygame.display.set_mode((1920, 1080), 0, 32)
+screen = pygame.display.set_mode((1280 , 720), 0, 32)
 background = pygame.image.load(background_image_filename).convert_alpha()
 
 x, y = 0, 0
@@ -26,7 +27,6 @@ class CREEP(object):
         self.surface_rotate=surface
         self.position_rotate = position[0]-self.w/2,position[1]-self.h/2
         self.position=position
-
     def move(self,x=0,y=0):
         self.position[0] += x*self.speed
         self.position[1] += y*self.speed
@@ -39,7 +39,7 @@ class CREEP(object):
 
 
 clock = pygame.time.Clock()
-creep=CREEP(background,[screen.get_width()/2,screen.get_height()/2],speed=2)
+creep=CREEP(background,[screen.get_width()/2,screen.get_height()/2],speed=5)
 
 while True:
     clock.tick(60)
@@ -48,12 +48,7 @@ while True:
            exit()
         if event.type == KEYDOWN:
             #键盘有按下？
-            if event.key==K_f:
-                Fullscreen=not Fullscreen
-                if Fullscreen:
-                    screen = pygame.display.set_mode((640, 480), FULLSCREEN, 32)
-                else:
-                    screen = pygame.display.set_mode((640, 480), 0, 32)
+
 
 
             # if event.key == K_d:
@@ -69,7 +64,7 @@ while True:
             #     y=-1
             #     x=0
 
-            elif event.key == K_LEFT:
+            if event.key == K_LEFT:
                 #按下的是左方向键的话，把x坐标减一
                 rotate = 5
             elif event.key == K_RIGHT:
@@ -94,11 +89,23 @@ while True:
     if creep.position[1] <= creep.h/2:
         creep.position[1] = creep.h/2
 
+
     creep.rotate(rotate)
     creep.move(x,y)
     screen.fill((255,255,255))
+    print(creep.direction)
+    drawx,drawy=int(creep.position[0]),int(creep.position[1])
 
+    for _ in range(-55,56,22):
+
+        px,py= int(np.cos(-(creep.direction+_)*np.pi/180)*100+creep.position[0]),int(np.sin(-(creep.direction+_)*np.pi/180)*100+creep.position[1])
+        pygame.draw.line(screen, (0, 0, 0), (drawx,drawy),  (px,py), 3)
     screen.blit(creep.surface_rotate, creep.position_rotate)
+
+
+
+
+
     #在新的位置上画图
     pygame.display.update()
 
