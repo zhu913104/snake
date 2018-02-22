@@ -1,7 +1,7 @@
 import numpy as np
 
 class MLP(object):
-    def __init__(self,parameter,Layers=(5, 10, 2)):
+    def __init__(self,parameter,Layers=(5, 10, 3)):
         self.net = [dict() for i in range(len(Layers))]
         self.net[0]['a']=np.zeros(Layers[0]+1)
         start=0
@@ -25,6 +25,7 @@ class MLP(object):
             np.copyto(self.net[i]['z'],self.net[i-1]['a'].dot(self.net[i]['W']))
             np.copyto(self.net[i]['a'],np.hstack((1,self.sigmoid(self.net[i]['z']))))
         np.copyto(self.p, self.softmax(self.net[-1]['a'][1:]))
+
     def sigmoid(self, z):
         return 1.0 / (1.0 + np.exp(-1.0*z))
     def softmax(self, a):
@@ -33,15 +34,3 @@ class MLP(object):
 
 
 
-
-
-parameter=np.random.random(93)
-
-x=np.random.random(5)
-print(x)
-print(parameter)
-m=MLP(parameter)
-
-m.forward(x)
-
-print(m.p)

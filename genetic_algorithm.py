@@ -9,10 +9,7 @@ MUTATE_RATE = 0.05
 POP_SIZE = 200
 N_GENERATIONS = 1000
 Sub_pop_size = 25
-migration_time = 50
-migration_number = 20
 
-np.random.seed(10)
 
 
 
@@ -25,26 +22,7 @@ class GA(object):
         self.mutate_rate = mutation_rate
         self.pop_size = pop_size
         self.sub_pop_size=Sub_pop_size
-        self.pop = np.random.random((self.sub_pop_size,self.pop_size,self.DNA_size))
-
-    # def translateDNA(self, DNA, city_position):     # get cities' coord in order
-    #     line_x = np.empty_like(DNA, dtype=np.float64)
-    #     line_y = np.empty_like(DNA, dtype=np.float64)
-    #     for k, pop in enumerate(DNA):
-    #         for i, d in enumerate(pop):
-    #             city_coord = city_position[d]
-    #             line_x[k, i, :] = city_coord[:, 0]
-    #             line_y[k, i, :] = city_coord[:, 1]
-    #     return line_x, line_y
-    #
-    # def get_fitness(self, line_x, line_y):
-    #     total_distance = np.empty((line_x.shape[0],line_x.shape[1]), dtype=np.float64)
-    #
-    #     for x in range(Sub_pop_size):
-    #         for i, (xs, ys) in enumerate(zip(line_x[x], line_y[x])):
-    #             total_distance[x][i] = np.sum(np.sqrt(np.square(np.diff(xs)) + np.square(np.diff(ys))))
-    #         fitness = np.exp(self.DNA_size * 2 / (total_distance))
-    #     return fitness, total_distance
+        self.pop = np.random.rand(self.sub_pop_size,self.pop_size,self.DNA_size)*2-1
 
     def select(self, fitness):
         pop = self.pop
@@ -86,41 +64,7 @@ class GA(object):
         self.pop = pop
 
 
-
-
-
-def translateDNA( DNA, city_position):  # get cities' coord in order
-    line_x = np.empty_like(DNA, dtype=np.float64)
-    line_y = np.empty_like(DNA, dtype=np.float64)
-    for k,pop in enumerate(DNA):
-        for i, d in enumerate(pop):
-            city_coord = city_position[d]
-            line_x[k,i, :] = city_coord[:, 0]
-            line_y[k,i, :] = city_coord[:, 1]
-    return line_x, line_y
-class TravelSalesPerson(object):
-    def __init__(self, n_cities):
-        self.city_position = np.random.rand(n_cities, 2)
-        plt.ion()
-
-    def plotting(self, lx, ly, total_d):
-        c_num = len(self.city_position)
-        plt.cla()
-        plt.title('MGA_3')
-        colour = np.linspace(10,20,c_num)
-        plt.scatter(self.city_position[:, 0].T, self.city_position[:, 1].T, s=100, c=colour)
-        plt.plot(lx.T, ly.T, 'k--')
-        plt.text(-0.05, -0.05, "Total distance=%.2f" % total_d, fontdict={'size': 10, 'color': 'red'})
-        plt.xlim((-0.1, 1.1))
-        plt.ylim((-0.1, 1.1))
-        plt.pause(0.0000000000000000000000000000001)
-
-env = TravelSalesPerson(N_CITIES)
-
-ga = GA(DNA_size=N_CITIES, cross_rate=CROSS_RATE, mutation_rate=MUTATE_RATE, pop_size=POP_SIZE)
-
-
-
+ga = GA(DNA_size=N_CITIES, cross_rate=CROSS_RATE, mutation_rate=MUTATE_RATE, pop_size=POP_SIZE,Sub_pop_size=Sub_pop_size)
 
 # for generation in range(N_GENERATIONS):
 #     t = time.time()
