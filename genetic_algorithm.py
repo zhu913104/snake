@@ -24,10 +24,10 @@ class GA(object):
         self.sub_pop_size=Sub_pop_size
         self.pop = np.random.rand(self.sub_pop_size,self.pop_size,self.DNA_size)*2-1
 
-    def select(self, fitness):
+    def select(self, fitness,p):
         pop = self.pop
         for i,fit in enumerate(fitness):
-            idx = np.random.choice(np.arange(self.pop_size), size=self.pop_size, replace=True, p=fit / fit.sum())
+            idx = np.random.choice(np.arange(self.pop_size), size=self.pop_size, replace=True, p=p)
             pop[i][:]=pop[i][idx]
         return pop
 
@@ -47,8 +47,8 @@ class GA(object):
                 child[point]=child[point]*(np.random.rand()*4-2)
         return child
 
-    def evolve(self, fitness):
-        pop = self.select(fitness)
+    def evolve(self, fitness,p):
+        pop = self.select(fitness,p)
         pop_copy = pop.copy()
         for sup,sup_copy in zip(pop,pop_copy):
             for parent in sup:  # for every parent
@@ -62,7 +62,10 @@ class GA(object):
         for x in range(Sub_pop_size):
             pop[x - 1][fitness_index[x - 1][:migration_number]] = pop[x][fitness_index[x][-migration_number:]]
         self.pop = pop
-
+    # def get_fitness(self,distance):
+    #     total_distance = np.empty((line_x.shape[0],line_x.shape[1]), dtype=np.float64)
+    #     fitness = np.exp(total_distance)
+    #     return fitness
 
 ga = GA(DNA_size=N_CITIES, cross_rate=CROSS_RATE, mutation_rate=MUTATE_RATE, pop_size=POP_SIZE,Sub_pop_size=Sub_pop_size)
 

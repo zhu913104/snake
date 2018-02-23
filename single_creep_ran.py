@@ -5,10 +5,15 @@ from pygame.locals import *
 from sys import exit
 import numpy as np
 from pygame.color import THECOLORS
-background_image_filename = 'img/bluecreep.png'
+
+
+
+creep_image_filename = 'img/bluecreep.png'
+background_image_filename = 'img/map1.png'
 pygame.init()
 screen = pygame.display.set_mode((1280 , 720), 0, 32)
-background = pygame.image.load(background_image_filename).convert_alpha()
+creep_image = pygame.image.load(creep_image_filename).convert_alpha()
+background = pygame.image.load(background_image_filename).convert()
 show_sensors = True
 
 
@@ -28,29 +33,26 @@ class CREEP(object):
         self.surface_rotate=surface
         self.position_rotate = position[0]-self.w/2,position[1]-self.h/2
         self.position=position
-        self.distance=1
+        self.distance=0
         self.crashed=False
         self.reading=[]
         self.reading_nl=[]
     def frame_step(self,action):
-        screen.fill(THECOLORS["black"])
-        pygame.draw.circle(screen, THECOLORS["red"], ((250, 250)), 100)
-        pygame.draw.circle(screen, THECOLORS["red"], ((1000, 300)), 200)
+        screen.blit(background, (0,0))
+
         screen.blit(self.surface_rotate, self.position_rotate)
         rotate = 0
         if action == 0:  # Turn left.
             rotate= 5
         elif action == 1:  # Turn right.
-            rotate= 0
-        elif action == 2:  # Turn right.
             rotate= -5
 
         clock.tick()
         y = math.sin(self.direction * math.pi / -180)
         x = math.cos(self.direction * math.pi / -180)
         self.reading=self.get_sonar_readings(self.position[0], 720-self.position[1], self.direction* math.pi / 180)
-        self.reading_nl=np.array(self.reading)/39
         # print(reading,self.distance)
+        self.reading_nl=np.array( self.reading)/39
 
         self.move(x, y)
         self.rotate(rotate)
@@ -74,7 +76,7 @@ class CREEP(object):
 
     def make_sonar_arm(self, x, y):
         spread = 10  # Default spread.
-        distance = 50  # Gap before first sensor.
+        distance = 10  # Gap before first sensor.
         arm_points = []
         # Make an arm. We build it flat because we'll rotate it about the
         # center later.
@@ -148,7 +150,7 @@ class CREEP(object):
         new_y = 720 - (y_change + y_1)
         return int(new_x), int(new_y)
     def get_track_or_not(self, reading):
-        if reading == THECOLORS['red']:
+        if reading == THECOLORS['green']:
             return 1
         else:
             return 0
