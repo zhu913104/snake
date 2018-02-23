@@ -5,6 +5,7 @@ import pygame
 import numpy as np
 from sys import exit
 from pygame.locals import *
+import time
 
 creep_image_filename = 'img/bluecreep.png'
 background_image_filename = 'img/map1.png'
@@ -18,8 +19,8 @@ Layers=(5,10,3)
 Parameter = 93
 CROSS_RATE = 0.05
 MUTATE_RATE = 0.5
-POP_SIZE = 10
-N_GENERATIONS = 1000
+POP_SIZE = 50
+N_GENERATIONS = 300
 Sub_pop_size = 1
 creep=[]
 creep_ga=[]
@@ -45,25 +46,33 @@ while True:
             creep_ga[idx]=MLP(individual)
 
         for i in range(POP_SIZE):
+
             if creep[i]:
-                if creep[i].crashed:
+                if creep[i].crashed  :
                     distance[i]=creep[i].distance
                     creep[i]=None
+                    np.save("over1000.npy",creep_ga[i])
+                elif creep[i].distance>10000:
+                    distance[i]=creep[i].distance
+                    creep[i]=None
+                    np.save("over1000.npy",creep_ga[i])
                 else:
+                    distance[i]=creep[i].distance
                     creep_ga[i].forward(creep[i].reading_nl)
                     act=np.argmax(creep_ga[i].p)
                     creep[i].frame_step(act)
         d=np.array(creep)
+
         # print(distance,distance.sum())
-        if (d==None).all():
-            print(distance)
+        if (d==None).all() :
+            print("generation",generation,distance)
             distance_np=np.array(distance)
             distance=[]
             creep=[]
             creep_ga=[]
-            np.save("d.npy",distance_np)
-            p=distance_np/distance_np.sum()
-            ga.evolve(distance_np,p)
+            np.save("distance_np.npy",distance_np)
+            np.save("parameter.npy",ga.pop)
+            ga.evolve(distance_np)
             for i in range(POP_SIZE):
                 creep.append(CREEP(creep_image, [153, 631], speed=5))
                 distance.append([])

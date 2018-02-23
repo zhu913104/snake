@@ -21,11 +21,10 @@ class GA(object):
         self.cross_rate = cross_rate
         self.mutate_rate = mutation_rate
         self.pop_size = pop_size
-        self.sub_pop_size=Sub_pop_size
         self.pop = np.random.rand(self.pop_size,self.DNA_size)*2-1
 
-    def select(self, fitness,p):
-        idx = np.random.choice(np.arange(self.pop_size), size=self.pop_size, replace=True, p=p)
+    def select(self, fitness):
+        idx = np.random.choice(np.arange(self.pop_size), size=self.pop_size, replace=True, p=fitness/fitness.sum())
         return self.pop[idx]
 
     def crossover(self, parent, pop):
@@ -44,8 +43,8 @@ class GA(object):
                 child[point]=child[point]*(np.random.rand()*4-2)
         return child
 
-    def evolve(self, fitness,p):
-        pop = self.select(fitness,p)
+    def evolve(self, fitness):
+        pop = self.select(fitness)
         pop_copy = pop.copy()
         for parent in pop:  # for every parent
             child = self.crossover(parent, pop_copy)
