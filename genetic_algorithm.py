@@ -16,20 +16,17 @@ Sub_pop_size = 25
 
 
 class GA(object):
-    def __init__(self, DNA_size, cross_rate, mutation_rate, pop_size,Sub_pop_size ):
+    def __init__(self, DNA_size, cross_rate, mutation_rate, pop_size ):
         self.DNA_size = DNA_size
         self.cross_rate = cross_rate
         self.mutate_rate = mutation_rate
         self.pop_size = pop_size
         self.sub_pop_size=Sub_pop_size
-        self.pop = np.random.rand(self.sub_pop_size,self.pop_size,self.DNA_size)*2-1
+        self.pop = np.random.rand(self.pop_size,self.DNA_size)*2-1
 
     def select(self, fitness,p):
-        pop = self.pop
-        for i,fit in enumerate(fitness):
-            idx = np.random.choice(np.arange(self.pop_size), size=self.pop_size, replace=True, p=p)
-            pop[i][:]=pop[i][idx]
-        return pop
+        idx = np.random.choice(np.arange(self.pop_size), size=self.pop_size, replace=True, p=p)
+        return self.pop[idx]
 
     def crossover(self, parent, pop):
         if np.random.rand() < self.cross_rate:
@@ -50,24 +47,17 @@ class GA(object):
     def evolve(self, fitness,p):
         pop = self.select(fitness,p)
         pop_copy = pop.copy()
-        for sup,sup_copy in zip(pop,pop_copy):
-            for parent in sup:  # for every parent
-                child = self.crossover(parent, sup_copy)
-                child = self.mutate(child)
-                parent[:] = child
-        self.pop = pop
-    def migration(self,fitness):
-        pop = self.pop
-        fitness_index = np.argsort(fitness)
-        for x in range(Sub_pop_size):
-            pop[x - 1][fitness_index[x - 1][:migration_number]] = pop[x][fitness_index[x][-migration_number:]]
+        for parent in pop:  # for every parent
+            child = self.crossover(parent, pop_copy)
+            child = self.mutate(child)
+            parent[:] = child
         self.pop = pop
     # def get_fitness(self,distance):
     #     total_distance = np.empty((line_x.shape[0],line_x.shape[1]), dtype=np.float64)
     #     fitness = np.exp(total_distance)
     #     return fitness
 
-ga = GA(DNA_size=N_CITIES, cross_rate=CROSS_RATE, mutation_rate=MUTATE_RATE, pop_size=POP_SIZE,Sub_pop_size=Sub_pop_size)
+ga = GA(DNA_size=N_CITIES, cross_rate=CROSS_RATE, mutation_rate=MUTATE_RATE, pop_size=POP_SIZE)
 
 # for generation in range(N_GENERATIONS):
 #     t = time.time()
