@@ -9,7 +9,7 @@ from pygame.color import THECOLORS
 
 
 creep_image_filename = 'img/bluecreep.png'
-background_image_filename = 'img/map1.png'
+background_image_filename = 'img/map2.png'
 pygame.init()
 screen = pygame.display.set_mode((1280 , 720), 0, 32)
 creep_image = pygame.image.load(creep_image_filename).convert_alpha()
@@ -25,7 +25,7 @@ dist=[]
 
 
 class CREEP(object):
-    def __init__(self,surface,position,direction=0,speed=1.0):
+    def __init__(self,surface,background,position,direction=0,speed=1.0):
         self.direction=direction
         self.speed=speed
         self.surface=surface
@@ -37,8 +37,9 @@ class CREEP(object):
         self.crashed=False
         self.reading=[]
         self.reading_nl=[]
+        self.background=background
     def frame_step(self,action):
-        screen.blit(background, (0,0))
+        screen.blit(self.background, (0,0))
 
         screen.blit(self.surface_rotate, self.position_rotate)
         rotate = 0
@@ -173,10 +174,5 @@ class CREEP(object):
 
 
 clock = pygame.time.Clock()
-for i in range(num):
-    x.append(CREEP(background,[np.random.randint(1280),np.random.randint(720)],speed=5))
-    dist.append([])
 
-
-font = pygame.font.SysFont("arial", 16)
 

@@ -16,12 +16,15 @@ Sub_pop_size = 25
 
 
 class GA(object):
-    def __init__(self, DNA_size, cross_rate, mutation_rate, pop_size ):
+    def __init__(self, DNA_size, cross_rate, mutation_rate, pop_size ,pop):
         self.DNA_size = DNA_size
         self.cross_rate = cross_rate
         self.mutate_rate = mutation_rate
         self.pop_size = pop_size
-        self.pop = np.random.rand(self.pop_size,self.DNA_size)*2-1
+        if pop.any():
+            self.pop=pop
+        else:
+            self.pop = np.random.rand(self.pop_size,self.DNA_size)*2-1
 
     def select(self, fitness):
         idx = np.random.choice(np.arange(self.pop_size), size=self.pop_size, replace=True, p=fitness/fitness.sum())
@@ -37,10 +40,7 @@ class GA(object):
     def mutate(self, child):
         for point in range(self.DNA_size):
             if np.random.rand() < self.mutate_rate:
-                swap_point = np.random.randint(0, self.DNA_size)
-                swapA, swapB = child[point], child[swap_point]
-                child[point], child[swap_point] = swapB, swapA
-                child[point]=child[point]*(np.random.rand()*4-2)
+                child[point]=child[point]+(np.random.rand()*2-1)
         return child
 
     def evolve(self, fitness):
@@ -56,7 +56,7 @@ class GA(object):
     #     fitness = np.exp(total_distance)
     #     return fitness
 
-ga = GA(DNA_size=N_CITIES, cross_rate=CROSS_RATE, mutation_rate=MUTATE_RATE, pop_size=POP_SIZE)
+# ga = GA(DNA_size=N_CITIES, cross_rate=CROSS_RATE, mutation_rate=MUTATE_RATE, pop_size=POP_SIZE)
 
 # for generation in range(N_GENERATIONS):
 #     t = time.time()
