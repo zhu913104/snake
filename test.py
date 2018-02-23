@@ -8,7 +8,7 @@ from pygame.locals import *
 import time
 
 creep_image_filename = 'img/bluecreep.png'
-background_image_filename = 'img/map1.png'
+background_image_filename = 'img/map3.png'
 pygame.init()
 screen = pygame.display.set_mode((1280 , 720), 0, 32)
 creep_image = pygame.image.load(creep_image_filename).convert_alpha()
@@ -29,24 +29,26 @@ distance=[]
 clock = pygame.time.Clock()
 
 pop=np.load("data/parameter_0223.npy")
-p=np.load("over1000.npy")
-creep=CREEP(creep_image,background,[153,620],speed=5,direction=0)
-creep_ga=MLP(p[5])
 
-ga = GA(DNA_size=Parameter, cross_rate=CROSS_RATE, mutation_rate=MUTATE_RATE, pop_size=POP_SIZE,pop=pop)
+creep=CREEP(creep_image,background,[104,575],speed=5,direction=90)
+
+
+
 
 while True:
     clock.tick(60)
     for event in pygame.event.get():
         if event.type == QUIT:
            exit()
-
-    if creep:
-        if creep.crashed  :
-            creep=None
-        else:
-            creep_ga.forward(creep.reading_nl)
-            act=np.argmax(creep_ga.p)
-            creep.frame_step(act)
+    for  idx,i in enumerate(pop):
+        creep_ga = MLP(i)
+        if creep:
+            if creep.crashed  :
+                creep=None
+                creep = CREEP(creep_image, background, [104, 575], speed=5, direction=90)
+            else:
+                creep_ga.forward(creep.reading_nl)
+                act=np.argmax(creep_ga.p)
+                creep.frame_step(act)
 
         # print(distance,distance.sum())

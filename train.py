@@ -8,7 +8,7 @@ from pygame.locals import *
 import time
 
 creep_image_filename = 'img/bluecreep.png'
-background_image_filename = 'img/map2.png'
+background_image_filename = 'img/map3.png'
 pygame.init()
 screen = pygame.display.set_mode((1280 , 720), 0, 32)
 creep_image = pygame.image.load(creep_image_filename).convert_alpha()
@@ -32,7 +32,7 @@ train_historys=np.zeros(2)
 # np.save("data/train_historys_0223_2.npy", train_historys)
 pop=np.load("data/parameter_0223.npy")
 for i in range(POP_SIZE):
-    creep.append(CREEP(creep_image,background,[153,620],speed=5,direction=0))
+    creep.append(CREEP(creep_image,background,[104,575],speed=5,direction=90))
     distance.append([])
     creep_ga.append([])
 
