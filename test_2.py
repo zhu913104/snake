@@ -13,7 +13,7 @@ pygame.init()
 screen = pygame.display.set_mode((1280 , 720), 0, 32)
 creep_image = pygame.image.load(creep_image_filename).convert_alpha()
 background = pygame.image.load(background_image_filename).convert()
-show_sensors = True
+
 
 Layers=(5,10,3)
 Parameter = 93
@@ -56,15 +56,15 @@ while True:
                     creep[d]=None
                     print("under 10000",d)
                     d+=1
-                elif creep[d].distance>10000:
-                    distance[d]=creep[d].distance
-                    creep[d]=None
-                    # usefulparameter=np.load("data/UsefulParameter.npy")
-                    # usefulparameter=np.vstack((usefulparameter,ga.pop[d]))
-                    # print(ga.pop[d])
-                    # np.save("data/UsefulParameter.npy",usefulparameter)
-                    # print("over 10000",d)
-                    d+=1
+                # elif creep[d].distance>10000:
+                #     distance[d]=creep[d].distance
+                #     creep[d]=None
+                #     # usefulparameter=np.load("data/UsefulParameter.npy")
+                #     # usefulparameter=np.vstack((usefulparameter,ga.pop[d]))
+                #     # print(ga.pop[d])
+                #     # np.save("data/UsefulParameter.npy",usefulparameter)
+                #     # print("over 10000",d)
+                #     d+=1
                 else:
                     distance[d]=creep[d].distance
                     creep_ga[d].forward(creep[d].reading_nl)

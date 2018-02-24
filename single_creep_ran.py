@@ -14,8 +14,8 @@ pygame.init()
 screen = pygame.display.set_mode((1280 , 720), 0, 32)
 creep_image = pygame.image.load(creep_image_filename).convert_alpha()
 background = pygame.image.load(background_image_filename).convert()
-show_sensors = True
-
+show_sensors = False
+draw_screen = True
 
 num=3
 x=[]
@@ -57,6 +57,8 @@ class CREEP(object):
 
         self.move(x, y)
         self.rotate(rotate)
+        if draw_screen:
+            pygame.display.flip()
         if self.car_is_crashed(self.reading):
             self.crashed = True
 
