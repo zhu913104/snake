@@ -57,7 +57,7 @@ while True:
                     creep[d]=None
                     print("NO.",d,"distance:",distance[d])
                     d+=1
-                elif creep[d].distance>100000:
+                elif creep[d].distance>10000:
                     distance[d]=creep[d].distance
                     creep[d]=None
                     # usefulparameter=np.load("data/UsefulParameter.npy")
