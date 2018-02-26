@@ -30,7 +30,7 @@ clock = pygame.time.Clock()
 
 pop=np.load("data/parameter_0223.npy")
 
-creep=CREEP(creep_image,background,[104,575],speed=5,direction=90)
+creep=CREEP(creep_image,background,[153,620],speed=5,direction=0)
 
 
 
@@ -40,12 +40,11 @@ while True:
     for event in pygame.event.get():
         if event.type == QUIT:
            exit()
-    for  idx,i in enumerate(pop):
+    for i in pop:
         creep_ga = MLP(i)
         if creep:
             if creep.crashed  :
                 creep=None
-                creep = CREEP(creep_image, background, [104, 575], speed=5, direction=90)
             else:
                 creep_ga.forward(creep.reading_nl)
                 act=np.argmax(creep_ga.p)

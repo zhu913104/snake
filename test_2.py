@@ -8,7 +8,7 @@ from pygame.locals import *
 import time
 
 creep_image_filename = 'img/bluecreep.png'
-background_image_filename = 'img/map3.png'
+background_image_filename = 'img/map4.png'
 pygame.init()
 screen = pygame.display.set_mode((1280 , 720), 0, 32)
 creep_image = pygame.image.load(creep_image_filename).convert_alpha()

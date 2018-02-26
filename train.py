@@ -29,10 +29,11 @@ generation=0
 clock = pygame.time.Clock()
 
 train_historys=np.zeros(2)
-# np.save("data/train_historys_0223_2.npy", train_historys)
-pop=np.load("data/parameter_0223.npy")
+np.save("data/train_historys_0226_2.npy", train_historys)
+pop=np.load("data/parameter_0226_1.npy")
+# pop=np.array(False)
 for i in range(POP_SIZE):
-    creep.append(CREEP(creep_image,background,[104,575],speed=5,direction=90))
+    creep.append(CREEP(creep_image,background,[104,575],speed=.5,direction=90))
     distance.append([])
     creep_ga.append([])
 
@@ -51,9 +52,10 @@ while True:
         for i in range(POP_SIZE):
 
             if creep[i]:
-                if creep[i].crashed or creep[i].distance>5000 :
+                if creep[i].crashed or creep[i].distance>50000 :
                     distance[i]=creep[i].distance
                     creep[i]=None
+
                 else:
                     distance[i]=creep[i].distance
                     creep_ga[i].forward(creep[i].reading_nl)
@@ -69,11 +71,11 @@ while True:
             distance=[]
             creep=[]
             creep_ga=[]
-            # train_historys=np.load("data/train_historys_0223_2.npy")
-            # train_history=np.hstack((generation,distance_np.mean()))
-            # train_historys=np.vstack((train_historys,train_history))
-            # np.save("data/train_historys_0223_2.npy",train_historys)
-            # np.save("data/parameter_0223_2.npy",ga.pop)
+            train_historys=np.load("data/train_historys_0226_2.npy")
+            train_history=np.hstack((generation,distance_np.mean()))
+            train_historys=np.vstack((train_historys,train_history))
+            np.save("data/train_historys_0226_2.npy",train_historys)
+            np.save("data/parameter_0226_2.npy",ga.pop)
 
             ga.evolve(distance_np)
             for i in range(POP_SIZE):

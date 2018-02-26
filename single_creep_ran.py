@@ -14,7 +14,7 @@ pygame.init()
 screen = pygame.display.set_mode((1280 , 720), 0, 32)
 creep_image = pygame.image.load(creep_image_filename).convert_alpha()
 background = pygame.image.load(background_image_filename).convert()
-show_sensors = False
+show_sensors = True
 draw_screen = True
 
 num=3
@@ -53,7 +53,7 @@ class CREEP(object):
         x = math.cos(self.direction * math.pi / -180)
         self.reading=self.get_sonar_readings(self.position[0], 720-self.position[1], self.direction* math.pi / 180)
         # print(reading,self.distance)
-        self.reading_nl=np.array( self.reading)/39
+        self.reading_nl=np.array( self.reading)/79
 
         self.move(x, y)
         self.rotate(rotate)
@@ -63,7 +63,7 @@ class CREEP(object):
             self.crashed = True
 
         else:
-            self.distance+=1
+            self.distance+=1*self.speed
 
 
 
@@ -78,12 +78,12 @@ class CREEP(object):
         self.position_rotate=self.surface_rotate.get_rect().move(self.position[0]-self.w/2,self.position[1]-self.h/2)
 
     def make_sonar_arm(self, x, y):
-        spread = 10  # Default spread.
-        distance = 10  # Gap before first sensor.
+        spread = 5  # Default spread.
+        distance = 5  # Gap before first sensor.
         arm_points = []
         # Make an arm. We build it flat because we'll rotate it about the
         # center later.
-        for i in range(1, 40):
+        for i in range(1, 80):
             arm_points.append((distance + x + (spread * i), y))
         return arm_points
     def get_sonar_readings(self, x, y, angle):
