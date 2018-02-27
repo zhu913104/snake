@@ -54,9 +54,9 @@ class CREEP(object):
         self.reading=self.get_sonar_readings(self.position[0], 720-self.position[1], self.direction* math.pi / 180)
         # print(reading,self.distance)
         self.reading_nl=np.array( self.reading)/79
-
-        self.move(x, y)
         self.rotate(rotate)
+        self.move(x, y)
+
         if draw_screen:
             pygame.display.flip()
         if self.car_is_crashed(self.reading):
@@ -120,8 +120,7 @@ class CREEP(object):
 
 
 
-        if show_sensors:
-            pygame.display.update()
+
         readings=np.array(readings)
         return readings
     def get_arm_distance(self, arm, x, y, angle, offset):
