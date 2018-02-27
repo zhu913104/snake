@@ -8,17 +8,17 @@ from pygame.locals import *
 import time
 
 creep_image_filename = 'img/bluecreep.png'
-background_image_filename = 'img/map1.png'
+background_image_filename = 'img/map5.png'
 pygame.init()
 screen = pygame.display.set_mode((1280, 720), 0, 32)
 creep_image = pygame.image.load(creep_image_filename).convert_alpha()
 background = pygame.image.load(background_image_filename).convert()
 show_sensors = True
 
-Layers = (5, 10,8, 3)
-Parameter = 175
-CROSS_RATE = 0.1
-MUTATE_RATE = 0.09
+Layers = (9, 15,8, 3)
+Parameter = 305
+CROSS_RATE = 0.25
+MUTATE_RATE = 0.15
 POP_SIZE = 500
 N_GENERATIONS = 300
 Sub_pop_size = 1
@@ -27,13 +27,14 @@ creep_ga = []
 distance = []
 generation = 0
 clock = pygame.time.Clock()
+maxdist=50000
 
 train_historys = np.zeros(2)
-np.save("data/train_historys_0226(5, 10,10, 3).npy", train_historys)
-pop = np.load("data/parameter_0226(5, 10,8, 3).npy")
+np.save("data/train_historys_0227(9, 15,8, 3).npy", train_historys)
+pop = np.load("data/parameter_0226(9, 15,8, 3).npy")
 # pop=np.array(False)
 for i in range(POP_SIZE):
-    creep.append(CREEP(creep_image, background, [104, 575], speed= 5, direction=90))
+    creep.append(CREEP(creep_image, background, [104+(np.random.randint(0,11)-5), 575+(np.random.randint(0,11)-5)], speed= 5, direction=90+(np.random.randint(0,11)-5)))
     distance.append([])
     creep_ga.append([])
 
@@ -57,8 +58,8 @@ while True:
                     creep[d]=None
                     print("NO.",d,"distance:",distance[d])
                     d+=1
-                elif creep[d].distance>10000:
-                    distance[d]=creep[d].distance
+                elif creep[d].distance>maxdist:
+                    distance[d]=creep[d].distance*1.1
                     creep[d]=None
                     # usefulparameter=np.load("data/UsefulParameter.npy")
                     # usefulparameter=np.vstack((usefulparameter,ga.pop[d]))
@@ -77,17 +78,19 @@ while True:
         if (d == None).all():
             generation += 1
             distance_np = np.array(distance)
+            maxdist=distance_np.max()
             print("generation", generation, distance_np.max())
+
             distance = []
             creep = []
             creep_ga = []
-            train_historys = np.load("data/train_historys_0226(5, 10,10, 3).npy")
+            train_historys = np.load("data/train_historys_0227(9, 15,8, 3).npy")
             train_history = np.hstack((generation, distance_np.mean()))
             train_historys = np.vstack((train_historys, train_history))
-            np.save("data/train_historys_0226(5, 10,10, 3).npy", train_historys)
-            np.save("data/parameter_0226(5, 10,8, 3).npy", ga.pop)
+            np.save("data/train_historys_0227(9, 15,8, 3).npy", train_historys)
+            np.save("data/parameter_0227(9, 15,8, 3).npy", ga.pop)
             ga.evolve(distance_np)
             for i in range(POP_SIZE):
-                creep.append(CREEP(creep_image, background, [104, 575], speed=5, direction=90))
+                creep.append(CREEP(creep_image, background, [104+(np.random.randint(0,11)-5), 575+(np.random.randint(0,11)-5)], speed=5, direction=90+(np.random.randint(0,11)-5)))
                 distance.append([])
                 creep_ga.append([])

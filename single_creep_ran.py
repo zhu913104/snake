@@ -99,14 +99,23 @@ class CREEP(object):
         arm_left = self.make_sonar_arm(x, y)
         arm_middle = arm_left
         arm_right = arm_left
-        arm_left_f=arm_left
-        arm_right_f=arm_left
+        arm_left_f0=arm_left
+        arm_right_f0=arm_left
+        arm_right_f1=arm_left
+        arm_left_f1=arm_left
+        arm_right_f2=arm_left
+        arm_left_f2=arm_left
+
 
         # Rotate them and get readings.
         readings.append(self.get_arm_distance(arm_left, x, y, angle, 0.9599310885968813))
-        readings.append(self.get_arm_distance(arm_left_f, x, y, angle, 0.4799655442984406))
+        readings.append(self.get_arm_distance(arm_left_f2, x, y, angle, 0.719948316447661))
+        readings.append(self.get_arm_distance(arm_left_f1, x, y, angle, 0.4799655442984406))
+        readings.append(self.get_arm_distance(arm_left_f0, x, y, angle, 0.2399827721492203))
         readings.append(self.get_arm_distance(arm_middle, x, y, angle, 0))
-        readings.append(self.get_arm_distance(arm_right_f, x, y, angle, -0.4799655442984406))
+        readings.append(self.get_arm_distance(arm_right_f0, x, y, angle, -0.2399827721492203))
+        readings.append(self.get_arm_distance(arm_right_f1, x, y, angle, -0.4799655442984406))
+        readings.append(self.get_arm_distance(arm_right_f2, x, y, angle, -0.719948316447661))
         readings.append(self.get_arm_distance(arm_right, x, y, angle, -0.9599310885968813))
 
 
