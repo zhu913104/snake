@@ -10,9 +10,9 @@ width = 1280
 height = 720
 screen = pygame.display.set_mode((width ,height), 0, 32)
 creep_image_filename = 'img/bluecreep.png'
-background_image_filename = 'img/map4.png'
+background_image_filename = 'img/map5.png'
 
-creep_num=20
+
 clock = pygame.time.Clock()
 show_sensors = True
 draw_screen = True
@@ -154,15 +154,27 @@ class CREEP(GameEntity):
         arm_left = self.make_sonar_arm(x, y)
         arm_middle = arm_left
         arm_right = arm_left
-        arm_left_f=arm_left
-        arm_right_f=arm_left
+        arm_left_f0=arm_left
+        arm_right_f0=arm_left
+        arm_right_f1=arm_left
+        arm_left_f1=arm_left
+        arm_right_f2=arm_left
+        arm_left_f2=arm_left
+
 
         # Rotate them and get readings.
         readings.append(self.get_arm_distance(arm_left, x, y, angle, 0.9599310885968813))
-        readings.append(self.get_arm_distance(arm_left_f, x, y, angle, 0.4799655442984406))
+        readings.append(self.get_arm_distance(arm_left_f2, x, y, angle, 0.719948316447661))
+        readings.append(self.get_arm_distance(arm_left_f1, x, y, angle, 0.4799655442984406))
+        readings.append(self.get_arm_distance(arm_left_f0, x, y, angle, 0.2399827721492203))
         readings.append(self.get_arm_distance(arm_middle, x, y, angle, 0))
-        readings.append(self.get_arm_distance(arm_right_f, x, y, angle, -0.4799655442984406))
+        readings.append(self.get_arm_distance(arm_right_f0, x, y, angle, -0.2399827721492203))
+        readings.append(self.get_arm_distance(arm_right_f1, x, y, angle, -0.4799655442984406))
+        readings.append(self.get_arm_distance(arm_right_f2, x, y, angle, -0.719948316447661))
         readings.append(self.get_arm_distance(arm_right, x, y, angle, -0.9599310885968813))
+
+
+
 
         readings=np.array(readings)
         return readings
@@ -173,6 +185,7 @@ class CREEP(GameEntity):
         # Look at each point and see if we've hit something.
         for point in arm:
             i += 1
+
             # Move the point to the right spot.
             rotated_p = self.get_rotated_point(
                 x, y, point[0], point[1], angle + offset
@@ -181,7 +194,7 @@ class CREEP(GameEntity):
             # Check if we've hit something. Return the current i (distance)
             # if we did.
             if rotated_p[0] <= 0 or rotated_p[1] <= 0 \
-                    or rotated_p[0] >= width or rotated_p[1] >= height:
+                    or rotated_p[0] >= 1280 or rotated_p[1] >= 720:
                 return i  # Sensor is off the screen.
             else:
                 obs = screen.get_at(rotated_p)
@@ -200,7 +213,7 @@ class CREEP(GameEntity):
         y_change = (y_1 - y_2) * math.cos(radians) - \
             (x_1 - x_2) * math.sin(radians)
         new_x = x_change + x_1
-        new_y = height - (y_change + y_1)
+        new_y = 720 - (y_change + y_1)
         return int(new_x), int(new_y)
     def get_track_or_not(self, reading):
         if reading == THECOLORS['green']:
@@ -212,7 +225,6 @@ class CREEP(GameEntity):
             return True
         else:
             return False
-
     def render(self, surface):
         GameEntity.render(self, surface)
 
