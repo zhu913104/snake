@@ -30,7 +30,7 @@ class World(object):
         self.background = pygame.display.set_mode((width , height), 0, 32)
         self.background.blit(background, (0,0))
         self.all_not_crashed =True
-
+        self.crash_num=0
 
     def add_entity(self, entity):
         self.entities[self.entity_id] = entity
@@ -50,6 +50,9 @@ class World(object):
     def process(self, action):
         for entity,act in zip(self.entities.values(),action):
             entity.process(act)
+        crash_num=np.vstack([entity.crashed for entity in self.entities.values()])
+        crash_num=crash_num.astype(int).sum()
+        self.crash_num=crash_num
         if np.vstack([entity.crashed for entity in self.entities.values()]).all()==True:
             self.all_not_crashed=False
 
