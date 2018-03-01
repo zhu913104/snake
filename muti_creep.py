@@ -14,7 +14,7 @@ background_image_filename = 'img/map5.png'
 
 
 clock = pygame.time.Clock()
-show_sensors = True
+show_sensors = False
 draw_screen = True
 creep_image = pygame.image.load(creep_image_filename).convert_alpha()
 background = pygame.image.load(background_image_filename).convert()
