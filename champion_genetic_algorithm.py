@@ -1,19 +1,5 @@
 import numpy as np
 
-import time
-
-
-N_CITIES = 30  # DNA size
-CROSS_RATE = 0.05
-MUTATE_RATE = 0.05
-POP_SIZE = 200
-N_GENERATIONS = 1000
-Sub_pop_size = 25
-
-
-
-
-
 
 class GA(object):
     def __init__(self, DNA_size, cross_rate, mutation_rate, pop_size ,pop):
@@ -21,10 +7,12 @@ class GA(object):
         self.cross_rate = cross_rate
         self.mutate_rate = mutation_rate
         self.pop_size = pop_size
+        self.max_distance=0
         if pop.any():
             self.pop=pop
         else:
             self.pop = np.random.rand(self.pop_size,self.DNA_size)*2-1
+        self.champion=self.pop[0]
 
     def select(self, fitness):
         idx = np.random.choice(np.arange(self.pop_size), size=self.pop_size, replace=True, p=fitness/fitness.sum())
@@ -44,12 +32,16 @@ class GA(object):
         return child
 
     def evolve(self, fitness):
+        if self.max_distance<np.max(fitness):
+            self.champion=self.pop[np.argmax(fitness)]
+            self.max_distance=np.max(fitness)
         pop = self.select(fitness)
         pop_copy = pop.copy()
         for parent in pop:  # for every parent
             child = self.crossover(parent, pop_copy)
             child = self.mutate(child)
             parent[:] = child
+        pop[0]=self.champion
         self.pop = pop
     # def get_fitness(self,distance):
     #     total_distance = np.empty((line_x.shape[0],line_x.shape[1]), dtype=np.float64)
