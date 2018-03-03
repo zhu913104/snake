@@ -10,7 +10,7 @@ width = 1280
 height = 720
 screen = pygame.display.set_mode((width ,height), 0, 32)
 creep_image_filename = 'img/bluecreep.png'
-background_image_filename = 'img/map5.png'
+background_image_filename = 'img/map7.png'
 
 
 clock = pygame.time.Clock()
