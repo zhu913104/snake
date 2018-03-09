@@ -15,11 +15,11 @@ creep_image = pygame.image.load(creep_image_filename).convert_alpha()
 background = pygame.image.load(background_image_filename).convert()
 
 
-Layers=(5,10,3)
+Layers=(9,15,8,3)
 Parameter = 93
 CROSS_RATE = 0.1
 MUTATE_RATE = 0.09
-POP_SIZE = 50
+POP_SIZE = 500
 N_GENERATIONS = 300
 Sub_pop_size = 1
 creep=[]
@@ -31,7 +31,7 @@ clock = pygame.time.Clock()
 
 train_historys=np.zeros(2)
 # np.save("data/train_historys_0223_2.npy", train_historys)
-pop=np.load("data/parameter_0223.npy")
+pop=np.load("data\parameter_map7_CGA(9, 15,8, 3).npy")
 for i in range(POP_SIZE):
     creep.append(CREEP(creep_image,background,[104,575],speed=1,direction=90))
     distance.append([])

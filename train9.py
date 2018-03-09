@@ -1,5 +1,5 @@
 from muti_creep import *
-from champion_genetic_algorithm import GA
+from genetic_algorithm import GA
 from neural_network import MLP
 import pygame
 import numpy as np
@@ -31,7 +31,7 @@ generation=0
 distance_limit=100000
 # pop=np.array(False)
 train_historys = np.zeros(2)
-np.save("data/train_historys_map7_CGA_2(9, 15,8, 3).npy", train_historys)
+np.save("data/train_historys_map7_GA_9(9, 15,8, 3).npy", train_historys)
 pop = np.load("data/parameter_map2(9, 15,8, 3).npy")
 # pop=np.array(False)
 TUNR_OFF=True
@@ -74,11 +74,11 @@ while True:
         distances=world.get_distance()
         ga.evolve(distances)
         world = World()
-        train_historys = np.load("data/train_historys_map7_CGA_2(9, 15,8, 3).npy")
+        train_historys = np.load("data/train_historys_map7_GA_9(9, 15,8, 3).npy")
         train_history = np.hstack((distances.mean(),distances.max()))
         train_historys = np.vstack((train_historys, train_history))
-        np.save("data/train_historys_map7_CGA_2(9, 15,8, 3).npy", train_historys)
-        np.save("data/parameter_map7_CGA_2(9, 15,8, 3).npy", ga.pop)
+        np.save("data/train_historys_map7_GA_9(9, 15,8, 3).npy", train_historys)
+        np.save("data/parameter_map7_GA_9(9, 15,8, 3).npy", ga.pop)
         for creep_no in range(POP_SIZE):
             creep = CREEP(world, creep_image, [start[0], start[1]], speed=2, direction=90+np.random.rand())
             world.add_entity(creep)
