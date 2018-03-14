@@ -1,73 +1,82 @@
-"""
-Visualize Genetic Algorithm to find a maximum point in a function.
-Visit my tutorial website for more: https://morvanzhou.github.io/tutorials/
-"""
+from muti_creep import *
+from genetic_algorithm import GA
+from neural_network import MLP
+import pygame
 import numpy as np
-import matplotlib.pyplot as plt
-
-DNA_SIZE = 10            # DNA length
-POP_SIZE = 100           # population size
-CROSS_RATE = 0.8         # mating probability (DNA crossover)
-MUTATION_RATE = 1    # mutation probability
-N_GENERATIONS = 200
-X_BOUND = [0, 5]         # x upper and lower bounds
+from sys import exit
+from pygame.locals import *
+import time
 
 
-def F(x): return np.sin(10*x)*x + np.cos(2*x)*x     # to find the maximum of this function
+
+pygame.init()
+width = 1280
+height = 720
+screen = pygame.display.set_mode((width ,height), 0, 32)
+
+Layers = (9, 15,8, 3)
+Parameter = 305
+CROSS_RATE = 0.3
+MUTATE_RATE = 0.15
+POP_SIZE = 500
+N_GENERATIONS = 300
+clock = pygame.time.Clock()
+show_sensors = True
+draw_screen = True
+start=(500,500)
+font = pygame.font.SysFont("arial", 32)
+font_2 = pygame.font.SysFont("arial", 16)
+creep_ga=[]
+generation=0
+distance_limit=100000
 
 
-# find non-zero fitness for selection
-def get_fitness(pred): return pred + 1e-3 - np.min(pred)
 
+pop = np.load("data/parameter_map7_CGA_2(9, 15,8, 3).npy")
 
-# convert binary DNA to decimal and normalize it to a range(0, 5)
-def translateDNA(pop): return pop.dot(2 ** np.arange(DNA_SIZE)[::-1]) / float(2**DNA_SIZE-1) * X_BOUND[1]
+prameter=pop[0]
 
+ga = GA(DNA_size=Parameter, cross_rate=CROSS_RATE, mutation_rate=MUTATE_RATE, pop_size=POP_SIZE,pop=pop)
+world = World()
 
-def select(pop, fitness):    # nature selection wrt pop's fitness
-    idx = np.random.choice(np.arange(POP_SIZE), size=POP_SIZE, replace=True,
-                           p=fitness/fitness.sum())
-    return pop[idx]
+creep = CREEP(world, creep_image, [start[0], start[1]], speed=.2, direction=-90+np.random.rand())
+world.add_entity(creep)
+creep_ga.append([])
+mask=np.array([0.57357643635104605,0.75183980747897738,0.88701083317822171,0.97134206981326154,1,0.97134206981326154,0.88701083317822171,0.75183980747897738,0.57357643635104605])
+while True:
+    clock.tick(6)
+    id = MLP(prameter,Layers)
+    Safety_rate=0
+    while world.all_not_crashed :
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                exit()
 
+        reading=world.get_reading()[0]
 
-def crossover(parent, pop):     # mating process (genes crossover)
-    if np.random.rand() < CROSS_RATE:
-        i_ = np.random.randint(0, POP_SIZE, size=1)                             # select another individual from pop
-        cross_points = np.random.randint(0, 2, size=DNA_SIZE).astype(np.bool)   # choose crossover points
-        parent[cross_points] = pop[i_, cross_points]                            # mating and produce one child
-    return parent
-
-
-def mutate(child):
-    for point in range(DNA_SIZE):
-        if np.random.rand() < MUTATION_RATE:
-            child[point] = 1 if child[point] == 0 else 0
-    return child
-
-
-pop = np.random.randint(2, size=(POP_SIZE, DNA_SIZE))   # initialize the pop DNA
-
-plt.ion()       # something about plotting
-x = np.linspace(*X_BOUND, 200)
-plt.plot(x, F(x))
-cham =0
-for _ in range(N_GENERATIONS):
-    F_values = F(translateDNA(pop))    # compute function value by extracting DNA
-
-    # something about plotting
-    if 'sca' in globals(): sca.remove()
-    sca = plt.scatter(translateDNA(pop), F_values, s=200, lw=0, c='red', alpha=0.5); plt.pause(0.05)
-
-    # GA part (evolution)
-    fitness = get_fitness(F_values)
-    cham=np.argmax(fitness)
-    print("Most fitted DNA: ", F(translateDNA(pop[np.argmax(fitness)])))
-    pop_og = pop.copy()
-    pop = select(pop, fitness)
-    pop_copy = pop.copy()
-    for parent in pop:
-        child = crossover(parent, pop_copy)
-        child = mutate(child)
-        parent[:] = child       # parent is replaced by its child
-    pop[0]=pop_og[cham]
-plt.ioff(); plt.show()
+        id.forward(reading)
+        print(reading.shape,mask.shape)
+        if reading.shape!=(0,):
+            Safety_rate=mask.dot(reading)
+        action = [np.argmax(id.p)]
+        if Safety_rate>4.5:
+            action=[2]
+        else:
+            action=[np.argmax(id.p)]
+        print(action)
+        # action = np.random.randint(0, 3, (POP_SIZE))
+        # print(world.get_distance().max())
+        text="max distance:"+str(world.get_distance().max())
+        text_2="Number of survivors:"+str(POP_SIZE-world.crash_num)
+        text_3="Safety_rate"+str(Safety_rate)
+        world.process(action)
+        world.render(screen)
+        screen.blit(font.render(text, True, (255, 0, 0)), (0, 0))
+        screen.blit(font_2.render(text_2, True, (255, 0, 0)), (0, 32))
+        screen.blit(font_2.render(text_3, True, (255, 0, 0)), (0, 48))
+        # if world.get_distance().max()>distance_limit:
+        #     distance_limit=world.get_distance().max*1.5
+        #     break
+        pygame.display.update()
+    if world.all_not_crashed!=True:
+        break

@@ -10,7 +10,7 @@ width = 1280
 height = 720
 screen = pygame.display.set_mode((width ,height), 0, 32)
 creep_image_filename = 'img/bluecreep.png'
-background_image_filename = 'img/map7.png'
+background_image_filename = 'img/map2.png'
 
 
 clock = pygame.time.Clock()
@@ -75,7 +75,6 @@ class GameEntity(object):
         self.name = name
         self.image = image
         self.image_rotate = image
-
         self.location = position
         self.speed = 0.
         self.id = 0
@@ -108,9 +107,9 @@ class CREEP(GameEntity):
         if self.crashed !=True:
             rotate = 0
             if action == 0:  # Turn left.
-                rotate= 5
+                rotate= .5
             elif action == 1:  # Turn right.
-                rotate= -5
+                rotate= -.5
             y = math.sin(self.direction * math.pi / -180)
             x = math.cos(self.direction * math.pi / -180)
             self.reading=self.get_sonar_readings(self.position[0], 720-self.position[1], self.direction* math.pi / 180)
@@ -164,7 +163,7 @@ class CREEP(GameEntity):
         arm_right_f2=arm_left
         arm_left_f2=arm_left
 
-
+        mask=[0.040068911403118745,0.280051683552339,0.5200344557015594,0.7600172278507797,1,0.7600172278507797,0.5200344557015594,0.280051683552339,0.040068911403118745]
         # Rotate them and get readings.
         readings.append(self.get_arm_distance(arm_left, x, y, angle, 0.9599310885968813))
         readings.append(self.get_arm_distance(arm_left_f2, x, y, angle, 0.719948316447661))
