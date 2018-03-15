@@ -42,11 +42,12 @@ world = World()
 creep = CREEP(world, creep_image, [start[0], start[1]], speed=.2, direction=-90+np.random.rand())
 world.add_entity(creep)
 creep_ga.append([])
-mask=np.array([0.57357643635104605,0.75183980747897738,0.88701083317822171,0.97134206981326154,1,0.97134206981326154,0.88701083317822171,0.75183980747897738,0.57357643635104605])
+mask=np.array([1,0.97134206981326154,0.88701083317822171,0.75183980747897738,0.57357643635104605,0.75183980747897738,0.88701083317822171,0.97134206981326154,1])
 while True:
     clock.tick(6)
     id = MLP(prameter,Layers)
-    Safety_rate=0
+    min=0
+    reading_mask=0
     while world.all_not_crashed :
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -55,20 +56,24 @@ while True:
         reading=world.get_reading()[0]
 
         id.forward(reading)
-        print(reading.shape,mask.shape)
+        print(reading_mask)
         if reading.shape!=(0,):
-            Safety_rate=mask.dot(reading)
+            reading_mask=mask*reading
+            min = reading_mask.min()
         action = [np.argmax(id.p)]
-        if Safety_rate>4.5:
+
+        if min > 0.2:
             action=[2]
+
         else:
+
             action=[np.argmax(id.p)]
-        print(action)
+
         # action = np.random.randint(0, 3, (POP_SIZE))
         # print(world.get_distance().max())
         text="max distance:"+str(world.get_distance().max())
         text_2="Number of survivors:"+str(POP_SIZE-world.crash_num)
-        text_3="Safety_rate"+str(Safety_rate)
+        text_3="Safety_rate"+str(min)
         world.process(action)
         world.render(screen)
         screen.blit(font.render(text, True, (255, 0, 0)), (0, 0))
