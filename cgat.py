@@ -13,17 +13,13 @@ pygame.init()
 width = 1280
 height = 720
 screen = pygame.display.set_mode((width ,height), 0, 32)
-
 Layers = (9, 15,8, 3)
 Parameter = 305
-CROSS_RATE = 0.3
-MUTATE_RATE = 0.15
-POP_SIZE = 500
-N_GENERATIONS = 300
 clock = pygame.time.Clock()
 show_sensors = True
 draw_screen = True
-start=(500,500)
+start=(84,62)
+target=(1176,645)
 font = pygame.font.SysFont("arial", 32)
 font_2 = pygame.font.SysFont("arial", 16)
 creep_ga=[]
@@ -32,14 +28,15 @@ distance_limit=100000
 
 
 
+
 pop = np.load("data/parameter_map7_CGA_2(9, 15,8, 3).npy")
 
 prameter=pop[0]
 
-ga = GA(DNA_size=Parameter, cross_rate=CROSS_RATE, mutation_rate=MUTATE_RATE, pop_size=POP_SIZE,pop=pop)
+
 world = World()
 
-creep = CREEP(world, creep_image, [start[0], start[1]], speed=.2, direction=-90+np.random.rand())
+creep = CREEP(world, creep_image, [start[0], start[1]], speed=2, direction=90+np.random.rand())
 world.add_entity(creep)
 creep_ga.append([])
 mask=np.array([1,0.97134206981326154,0.88701083317822171,0.75183980747897738,0.57357643635104605,0.75183980747897738,0.88701083317822171,0.97134206981326154,1])
@@ -56,32 +53,48 @@ while True:
         reading=world.get_reading()[0]
 
         id.forward(reading)
-        print(reading_mask)
+
         if reading.shape!=(0,):
             reading_mask=mask*reading
             min = reading_mask.min()
         action = [np.argmax(id.p)]
 
-        if min > 0.2:
-            action=[2]
-
+        if min > 0.1:
+            action = [2]
+            selfposition_direction = world.get_direction()[0][0] % 360
+            position2taget = world.get_position()[0] - target
+            taget_direction = (np.arccos(position2taget[0] / (position2taget[1] ** 2 + position2taget[0] ** 2) ** 0.5) / np.pi * 180) + 180
+            taget_direction %= 360
+            if position2taget[1] > 0:
+                taget_direction -= 360
+                taget_direction *= -1
+            if ((taget_direction-selfposition_direction)>0 and abs(taget_direction-selfposition_direction)<180) or((taget_direction-selfposition_direction)<0 and abs(taget_direction-selfposition_direction)>180) :
+                action=[0]
+            elif ((taget_direction-selfposition_direction)<0 and abs(taget_direction-selfposition_direction)<180) or((taget_direction-selfposition_direction)>0 and abs(taget_direction-selfposition_direction)>180) :
+                action=[1]
+            else:
+                action=[2]
         else:
-
             action=[np.argmax(id.p)]
 
-        # action = np.random.randint(0, 3, (POP_SIZE))
-        # print(world.get_distance().max())
-        text="max distance:"+str(world.get_distance().max())
-        text_2="Number of survivors:"+str(POP_SIZE-world.crash_num)
-        text_3="Safety_rate"+str(min)
+
+        position2taget = world.get_position()[0] - target
+        if ((position2taget[1] ** 2 + position2taget[0] ** 2) ** 0.5)<10:
+            if np.random.rand()>0.5:
+                target=(np.random.randint(1100,1200),np.random.randint(40,650))
+            else:
+                target = (np.random.randint(60, 200), np.random.randint(40, 650))
+
+        text="Distance to target :"+str(int((position2taget[1] ** 2 + position2taget[0] ** 2) ** 0.5))
+
         world.process(action)
         world.render(screen)
         screen.blit(font.render(text, True, (255, 0, 0)), (0, 0))
-        screen.blit(font_2.render(text_2, True, (255, 0, 0)), (0, 32))
-        screen.blit(font_2.render(text_3, True, (255, 0, 0)), (0, 48))
+
         # if world.get_distance().max()>distance_limit:
         #     distance_limit=world.get_distance().max*1.5
         #     break
+        pygame.draw.circle(screen, (255, 255, 255), (target), 2)
         pygame.display.update()
     if world.all_not_crashed!=True:
         break

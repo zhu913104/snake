@@ -8,6 +8,8 @@ from pygame.color import THECOLORS
 pygame.init()
 width = 1280
 height = 720
+# width = 400
+# height = 400
 screen = pygame.display.set_mode((width ,height), 0, 32)
 creep_image_filename = 'img/bluecreep.png'
 background_image_filename = 'img/map2.png'
@@ -64,7 +66,10 @@ class World(object):
         return np.hstack([entity.distance for entity in self.entities.values()])
     def get_reading(self):
         return np.vstack([entity.reading_nl for entity in self.entities.values()])
-
+    def get_position(self):
+        return np.vstack([entity.position for entity in self.entities.values()])
+    def get_direction(self):
+        return np.vstack([entity.direction for entity in self.entities.values()])
 
 
 
@@ -107,12 +112,12 @@ class CREEP(GameEntity):
         if self.crashed !=True:
             rotate = 0
             if action == 0:  # Turn left.
-                rotate= .5
+                rotate= 5
             elif action == 1:  # Turn right.
-                rotate= -.5
+                rotate= -5
             y = math.sin(self.direction * math.pi / -180)
             x = math.cos(self.direction * math.pi / -180)
-            self.reading=self.get_sonar_readings(self.position[0], 720-self.position[1], self.direction* math.pi / 180)
+            self.reading=self.get_sonar_readings(self.position[0], height-self.position[1], self.direction* math.pi / 180)
             # print(reading,self.distance)
             self.reading_nl=np.array( self.reading)/79
             self.move(x, y)
@@ -196,7 +201,7 @@ class CREEP(GameEntity):
             # Check if we've hit something. Return the current i (distance)
             # if we did.
             if rotated_p[0] <= 0 or rotated_p[1] <= 0 \
-                    or rotated_p[0] >= 1280 or rotated_p[1] >= 720:
+                    or rotated_p[0] >= width or rotated_p[1] >= height:
                 return i  # Sensor is off the screen.
             else:
                 obs = screen.get_at(rotated_p)
@@ -215,7 +220,7 @@ class CREEP(GameEntity):
         y_change = (y_1 - y_2) * math.cos(radians) - \
             (x_1 - x_2) * math.sin(radians)
         new_x = x_change + x_1
-        new_y = 720 - (y_change + y_1)
+        new_y = height - (y_change + y_1)
         return int(new_x), int(new_y)
     def get_track_or_not(self, reading):
         if reading == THECOLORS['green']:
