@@ -112,9 +112,9 @@ class CREEP(GameEntity):
         if self.crashed !=True:
             rotate = 0
             if action == 0:  # Turn left.
-                rotate= 5
+                rotate= 2.5*self.speed
             elif action == 1:  # Turn right.
-                rotate= -5
+                rotate= -2.5*self.speed
             y = math.sin(self.direction * math.pi / -180)
             x = math.cos(self.direction * math.pi / -180)
             self.reading=self.get_sonar_readings(self.position[0], height-self.position[1], self.direction* math.pi / 180)

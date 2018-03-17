@@ -18,8 +18,11 @@ Parameter = 305
 clock = pygame.time.Clock()
 show_sensors = True
 draw_screen = True
-start=(84,62)
-target=(1176,645)
+start=(1042,676)
+targetlist=np.array([(750,540),(750,440),(750,340),(750,240),(750,140),(550,140),(550,240),(550,340),(550,440),(550,540),(150,650),(150,550),(150,450),(150,350),(150,250),(150,150),(200,100),(300,100),(400,100),(500,100),(600,100),(700,100),(800,100),(900,100),(1000,100),(1100,100),(1170,150),(1170,250),(1170,350),(1170,450),(1170,550),(1170,650)])
+x=np.random.randint(len(targetlist))
+target=targetlist[x]
+targetlist=np.delete(targetlist,x,0)
 font = pygame.font.SysFont("arial", 32)
 font_2 = pygame.font.SysFont("arial", 16)
 creep_ga=[]
@@ -39,7 +42,7 @@ world = World()
 creep = CREEP(world, creep_image, [start[0], start[1]], speed=2, direction=90+np.random.rand())
 world.add_entity(creep)
 creep_ga.append([])
-mask=np.array([1,0.97134206981326154,0.88701083317822171,0.75183980747897738,0.57357643635104605,0.75183980747897738,0.88701083317822171,0.97134206981326154,1])
+mask=np.array([0.57357643635104605,0.75183980747897738,0.88701083317822171,0.97134206981326154,1,0.97134206981326154,0.88701083317822171,0.75183980747897738,0.57357643635104605])
 while True:
     clock.tick(6)
     id = MLP(prameter,Layers)
@@ -79,11 +82,10 @@ while True:
 
 
         position2taget = world.get_position()[0] - target
-        if ((position2taget[1] ** 2 + position2taget[0] ** 2) ** 0.5)<10:
-            if np.random.rand()>0.5:
-                target=(np.random.randint(1100,1200),np.random.randint(40,650))
-            else:
-                target = (np.random.randint(60, 200), np.random.randint(40, 650))
+        if ((position2taget[1] ** 2 + position2taget[0] ** 2) ** 0.5)<20:
+            x = np.random.randint(len(targetlist))
+            target = targetlist[x]
+            targetlist = np.delete(targetlist, x, 0)
 
         text="Distance to target :"+str(int((position2taget[1] ** 2 + position2taget[0] ** 2) ** 0.5))
 
@@ -94,7 +96,11 @@ while True:
         # if world.get_distance().max()>distance_limit:
         #     distance_limit=world.get_distance().max*1.5
         #     break
-        pygame.draw.circle(screen, (255, 255, 255), (target), 2)
+
+        pygame.draw.circle(screen, (255, 255, 255), (target), 10)
+        for x in targetlist:
+            pygame.draw.circle(screen, (255, 255, 255), (x), 2)
+
         pygame.display.update()
     if world.all_not_crashed!=True:
         break
