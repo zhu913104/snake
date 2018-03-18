@@ -56,6 +56,7 @@ while True:
         for idx, reading in enumerate(world.get_reading()):
             creep_ga[idx].forward(reading)
         action=np.vstack([np.argmax(creep_ga_one.p) for creep_ga_one in creep_ga])
+        print(action.shape)
         # action = np.random.randint(0, 3, (POP_SIZE))
         # print(world.get_distance().max())
         text="max distance:"+str(world.get_distance().max())

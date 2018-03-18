@@ -70,7 +70,11 @@ class World(object):
         return np.vstack([entity.position for entity in self.entities.values()])
     def get_direction(self):
         return np.vstack([entity.direction for entity in self.entities.values()])
-
+    def set_postion(self,position):
+        for entity in self.entities.values():
+            entity.position[0]=position[0]
+            entity.position[1] = position[1]
+            print(entity.position)
 
 
 
