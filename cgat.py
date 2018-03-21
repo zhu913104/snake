@@ -18,7 +18,7 @@ Parameter = 305
 clock = pygame.time.Clock()
 show_sensors = True
 draw_screen = True
-start=(1042,676)
+start=(370,676)
 targetlist=np.array([(750,540),(750,440),(750,340),(750,240),(750,140),(550,140),(550,240),(550,340),(550,440),(550,540),(150,650),(150,550),(150,450),(150,350),(150,250),(150,150),(200,100),(300,100),(400,100),(500,100),(600,100),(700,100),(800,100),(900,100),(1000,100),(1100,100),(1170,150),(1170,250),(1170,350),(1170,450),(1170,550),(1170,650)])
 x=np.random.randint(len(targetlist))
 target=targetlist[x]
@@ -32,14 +32,14 @@ distance_limit=100000
 
 
 
-pop = np.load("data/parameter_map7_CGA_2(9, 15,8, 3).npy")
+pop = np.load("data/parameter_EXB_train_1.npy")
 
-prameter=pop[0]
+prameter=pop[1]
 
 
 world = World()
 
-creep = CREEP(world, creep_image, [start[0], start[1]], speed=2, direction=90+np.random.rand())
+creep = CREEP(world, creep_image, [start[0], start[1]], speed=1, direction=90+np.random.rand())
 world.add_entity(creep)
 creep_ga.append([])
 mask=np.array([0.57357643635104605,0.75183980747897738,0.88701083317822171,0.97134206981326154,1,0.97134206981326154,0.88701083317822171,0.75183980747897738,0.57357643635104605])
@@ -89,8 +89,9 @@ while True:
 
         text="Distance to target :"+str(int((position2taget[1] ** 2 + position2taget[0] ** 2) ** 0.5))
 
-        world.process(action)
         world.render(screen)
+        world.process(action)
+
         screen.blit(font.render(text, True, (255, 0, 0)), (0, 0))
 
         # if world.get_distance().max()>distance_limit:

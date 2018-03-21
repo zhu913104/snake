@@ -12,14 +12,14 @@ height = 720
 # height = 400
 screen = pygame.display.set_mode((width ,height), 0, 32)
 creep_image_filename = 'img/bluecreep.png'
-background_image_filename = 'img/map2.png'
+background_image_filename = 'img/map2_c.png'
 
 
 clock = pygame.time.Clock()
 show_sensors = False
 draw_screen = True
 creep_image = pygame.image.load(creep_image_filename).convert_alpha()
-background = pygame.image.load(background_image_filename).convert()
+background = pygame.image.load(background_image_filename).convert_alpha()
 
 
 
@@ -50,6 +50,7 @@ class World(object):
             return None
 
     def process(self, action):
+
         for entity,act in zip(self.entities.values(),action):
             entity.process(act)
         crash_num=np.vstack([entity.crashed for entity in self.entities.values()])
@@ -58,10 +59,14 @@ class World(object):
         if np.vstack([entity.crashed for entity in self.entities.values()]).all()==True:
             self.all_not_crashed=False
 
+
+
     def render(self, surface):
-        self.background.blit(background, (0,0))
+        self.background.fill((0,0,0))
         for entity in self.entities.values():
             entity.render(surface)
+
+        self.background.blit(background, (0,0))
     def get_distance(self):
         return np.hstack([entity.distance for entity in self.entities.values()])
     def get_reading(self):
@@ -70,11 +75,14 @@ class World(object):
         return np.vstack([entity.position for entity in self.entities.values()])
     def get_direction(self):
         return np.vstack([entity.direction for entity in self.entities.values()])
-    def set_postion(self,position):
+    def set_postion(self,position,d):
         for entity in self.entities.values():
             entity.crashed = False
             entity.position[0]=position[0]
             entity.position[1] = position[1]
+            entity.direction=d
+            entity.distance=0
+        self.all_not_crashed = True
 
 
 
@@ -121,6 +129,12 @@ class CREEP(GameEntity):
                 rotate= 2.5*self.speed
             elif action == 1:  # Turn right.
                 rotate= -2.5*self.speed
+            elif action == 2:  # Turn right.
+                rotate=  0*self.speed
+            elif action == 3:  # Turn right.
+                rotate=  10*self.speed
+            elif action == 4:  # Turn right.
+                rotate=  -10*self.speed
             y = math.sin(self.direction * math.pi / -180)
             x = math.cos(self.direction * math.pi / -180)
             self.reading=self.get_sonar_readings(self.position[0], height-self.position[1], self.direction* math.pi / 180)
@@ -240,29 +254,3 @@ class CREEP(GameEntity):
             return False
     def render(self, surface):
         GameEntity.render(self, surface)
-
-
-# world = World()
-# for creep_no in range(creep_num):
-#     creep=CREEP(world,creep_image, [np.random.randint(500,1000), np.random.randint(200,300)], speed=1, direction=90)
-#     world.add_entity(creep)
-#
-# while True:
-#     clock.tick()
-#     for event in pygame.event.get():
-#         if event.type == QUIT:
-#             exit()
-#     while world.all_not_crashed:
-#
-#         action=np.random.randint(0,3,(creep_num))
-#
-#         world.process(action)
-#         world.render(screen)
-#         pygame.display.update()
-#     print("OK")
-#     world = World()
-#     for creep_no in range(creep_num):
-#         creep = CREEP(world, creep_image, [np.random.randint(500, 1000), np.random.randint(200, 300)], speed=1,
-#                       direction=90)
-#         world.add_entity(creep)
-

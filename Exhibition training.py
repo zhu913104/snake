@@ -22,10 +22,12 @@ N_GENERATIONS = 300
 clock = pygame.time.Clock()
 show_sensors = True
 draw_screen = True
-start=(1042,676)
+start=(370,676)
 targetlist=np.array([(750,540),(750,440),(750,340),(750,240),(750,140),(550,140),(550,240),(550,340),(550,440),(550,540),(150,650),(150,550),(150,450),(150,350),(150,250),(150,150),(200,100),(300,100),(400,100),(500,100),(600,100),(700,100),(800,100),(900,100),(1000,100),(1100,100),(1170,150),(1170,250),(1170,350),(1170,450),(1170,550),(1170,650)])
+
 x = np.random.randint(len(targetlist))
 target=targetlist[x]
+targetlist=np.delete(targetlist , x,0)
 font = pygame.font.SysFont("arial", 32)
 font_2 = pygame.font.SysFont("arial", 16)
 creep_ga=[]
@@ -42,7 +44,7 @@ ga = GA(DNA_size=Parameter, cross_rate=CROSS_RATE, mutation_rate=MUTATE_RATE, po
 world = World()
 
 for creep_no in range(POP_SIZE):
-    creep = CREEP(world, creep_image, [start[0], start[1]], speed=2, direction=90+np.random.rand())
+    creep = CREEP(world, creep_image, [start[0], start[1]], speed=5, direction=90+np.random.rand())
     world.add_entity(creep)
     creep_ga.append([])
 mask=np.array([0.57357643635104605,0.75183980747897738,0.88701083317822171,0.97134206981326154,1,0.97134206981326154,0.88701083317822171,0.75183980747897738,0.57357643635104605])
@@ -53,9 +55,11 @@ while True:
     action=[]
     position2taget_exp=[]
     arrived=True
+    c=0
     for idx, individual in enumerate(ga.pop):
         creep_ga[idx] = MLP(individual, Layers)
     while world.all_not_crashed and arrived :
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 exit()
@@ -96,29 +100,57 @@ while True:
             position2taget_distance[idx]=np.sqrt(np.square(position2taget[0])+np.square(position2taget[1]))
 
         position2taget_distance=np.array(position2taget_distance)
-        position2taget_exp=np.exp(100/position2taget_distance)
 
-        if position2taget_distance.min()<10.0  or  world.all_not_crashed!=True or world.get_distance().max()>10000:
+        position2taget_exp=np.exp(300/position2taget_distance)*(world.get_distance()/np.max(world.get_distance()))
+
+
+        world.render(screen)
+        world.process(action)
+
+
+
+        if position2taget_distance.min()<30.0:
+            print("arrived")
+            p=np.argmax(position2taget_exp)
+            print(p)
+            world.set_postion(world.get_position()[p],world.get_direction()[p][0])
             generation += 1
             target_new=(0,0)
             p=position2taget_distance.argmin()
             x = np.random.randint(len(targetlist))
-            world.set_postion(world.get_position()[p])
+            # x=-1
             target_new = targetlist[x]
-            print(target_new,target)
-            print(((target_new[0]-target[0])**2+(target_new[1]+target[1])**2)**0.5)
-            while ((target_new[0]-target[0])**2+(target_new[1]+target[1])**2)**0.5 ==0:
+            while (((target_new[0]-target[0])**2+(target_new[1]-target[1])**2)**0.5) ==0:
+                print("SAME")
                 x = np.random.randint(len(targetlist))
                 target_new = targetlist[x]
-            else:
-                target = target_new
+            target = target_new
             arrived = False
+            print(np.max(position2taget_exp), np.min(position2taget_exp))
             ga.evolve(position2taget_exp)
-            print("eve")
+            c=0
+        elif world.all_not_crashed!=True or world.get_distance().max()>5000 :
+            p = np.argmin(position2taget_exp)
+            c+=1
+            print("not arrived")
+            world.set_postion(target, world.get_direction()[p][0])
+            generation += 1
+            target_new = (0, 0)
+            p = position2taget_distance.argmin()
+            x = np.random.randint(len(targetlist))
+            # x=-1
+            target_new = targetlist[x]
+            while (((target_new[0] - target[0]) ** 2 + (target_new[1] - target[1]) ** 2) ** 0.5) == 0:
+                print("SAME")
+                x = np.random.randint(len(targetlist))
+                target_new = targetlist[x]
+            if c>100:
+                ga.evolve(position2taget_exp)
+                c=0
+            target = target_new
+            arrived = False
 
 
-        world.process(action)
-        world.render(screen)
         action=[]
         position2taget_distance = []
         # if world.get_distance().max()>distance_limit:
@@ -127,7 +159,8 @@ while True:
 
         pygame.draw.circle(screen, (255, 255, 255), (target), 10)
         for x in targetlist:
-            pygame.draw.circle(screen, (255, 255, 255), (x), 2)
+
+            pygame.draw.circle(screen, (255, 255, 255), x, 2)
         text_2="generation:"+str(generation)
         screen.blit(font.render(text_2, True, (255, 0, 0)), (0, 0))
         pygame.display.update()
