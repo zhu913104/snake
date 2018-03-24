@@ -1,5 +1,5 @@
-from muti_creep import *
-from genetic_algorithm import GA
+from muti_creep_2 import *
+from champion_genetic_algorithm import GA
 from neural_network import MLP
 import pygame
 import numpy as np
@@ -47,7 +47,7 @@ for creep_no in range(POP_SIZE):
     world.add_entity(creep)
     creep_ga.append([])
 mask=np.array([0.57357643635104605,0.75183980747897738,0.88701083317822171,0.97134206981326154,1,0.97134206981326154,0.88701083317822171,0.75183980747897738,0.57357643635104605])
-
+# mask=np.array([1,1,1,1,1,1,1,1,1])
 
 
 
@@ -58,7 +58,8 @@ while True:
     position2taget_exp=[]
     arrived=True
     position2taget_distance_best=[]
-    #將參數分別丟到NN裡
+
+    #將參數分別丟到NN裡`
     for i in range(POP_SIZE):
         position2taget_distance_best.append(100000)
 
@@ -83,8 +84,8 @@ while True:
                 min = reading_mask.min()
             position2taget = data[2] - target
             position2taget_distance[idx]=np.sqrt(np.square(position2taget[0])+np.square(position2taget[1]))
-            if min >0.1 :
-            # if min > 0.1 and position2taget_distance[idx] < position2taget_distance_best[idx]:
+            if min >0.15 :
+            # if min > 0.13 and position2taget_distance[idx] < position2taget_distance_best[idx]:
                 #如果高於安全值且在離目標的歷史最小值時就朝目標前進
                 selfposition_direction = data[1] % 360
                 position2taget = data[2] - target
@@ -117,11 +118,11 @@ while True:
 
 
         position2taget_distance=np.array(position2taget_distance)
-        position2taget_exp=np.exp(10*position2taget_distance.min()/(position2taget_distance+0.00001))*(world.get_distance()/(np.max(world.get_distance())+0.00001))
+        position2taget_exp=(10000*position2taget_distance.min()/(position2taget_distance+0.00001))*(world.get_distance()/(np.max(world.get_distance())+0.00001))
 
-
-        world.render(screen)
         world.process(action)
+        world.render(screen)
+
 
 
         if position2taget_distance.min()<30.0:
@@ -247,4 +248,4 @@ while True:
         text_2="generation:"+str(generation)
         screen.blit(font.render(text_2, True, (255, 0, 0)), (0, 0))
         pygame.display.update()
-    np.save("data/parameter_EXB_train_2.npy", ga.pop)
+    np.save("data/parameter_EXB_train_4.npy", ga.pop)
