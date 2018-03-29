@@ -17,7 +17,7 @@ screen = pygame.display.set_mode((width ,height), 0, 32)
 Layers = (9, 15,8, 5)
 Parameter = 323
 CROSS_RATE = 0.3
-MUTATE_RATE = 0.15
+MUTATE_RATE = 0.3
 POP_SIZE = 500
 N_GENERATIONS = 300
 clock = pygame.time.Clock()
@@ -38,7 +38,7 @@ pop = np.load("data/parameter_EXB_train_2.npy")
 ga = GA(DNA_size=Parameter, cross_rate=CROSS_RATE, mutation_rate=MUTATE_RATE, pop_size=POP_SIZE,pop=pop)
 world = World()
 for creep_no in range(POP_SIZE):
-    creep = CREEP(world, creep_image, [start[0], start[1]], speed=2, direction=90+np.random.rand())
+    creep = CREEP(world, creep_image, [start[0], start[1]], speed=1, direction=90+np.random.rand())
     world.add_entity(creep)
     creep_ga.append([])
 
@@ -59,9 +59,9 @@ while True:
         text="max distance:"+str(world.get_distance().max())
         text_2="Number of survivors:"+str(POP_SIZE-world.crash_num)
 
-
-        world.render(screen)
         world.process(action)
+        world.render(screen)
+
 
         screen.blit(font.render(text, True, (255, 0, 0)), (0, 0))
         screen.blit(font_2.render(text_2, True, (255, 0, 0)), (0, 32))

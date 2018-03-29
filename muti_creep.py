@@ -133,7 +133,7 @@ class CREEP(GameEntity):
             x = math.cos(self.direction * math.pi / -180)
             self.reading=self.get_sonar_readings(self.position[0], height-self.position[1], self.direction* math.pi / 180)
             # print(reading,self.distance)
-            self.reading_nl=np.array( self.reading)/79
+            self.reading_nl=np.array( self.reading)/19
             self.move(x, y)
             self.rotate(rotate)
             if self.car_is_crashed(self.reading):
@@ -159,7 +159,7 @@ class CREEP(GameEntity):
         arm_points = []
         # Make an arm. We build it flat because we'll rotate it about the
         # center later.
-        for i in range(1, 80):
+        for i in range(1, 20):
             arm_points.append((distance + x + (spread * i), y))
         return arm_points
     def get_sonar_readings(self, x, y, angle):
