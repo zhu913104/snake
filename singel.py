@@ -35,25 +35,23 @@ distance_limit=100000
 pop = np.load("data/parameter_EXB_train_2.npy")
 # pop=np.array(False)
 
-ga = GA(DNA_size=Parameter, cross_rate=CROSS_RATE, mutation_rate=MUTATE_RATE, pop_size=POP_SIZE,pop=pop)
+# ga = GA(DNA_size=Parameter, cross_rate=CROSS_RATE, mutation_rate=MUTATE_RATE, pop_size=POP_SIZE,pop=pop)
 world = World()
-for creep_no in range(POP_SIZE):
-    creep = CREEP(world, creep_image, [start[0], start[1]], speed=1, direction=90+np.random.rand())
-    world.add_entity(creep)
-    creep_ga.append([])
+# for creep_no in range(POP_SIZE):
+creep = CREEP(world, creep_image, [start[0], start[1]], speed=1, direction=90+np.random.rand())
+world.add_entity(creep)
+#     creep_ga.append([])
 
 while True:
     clock.tick()
-
-    for idx, individual in enumerate(ga.pop):
-        creep_ga[idx] = MLP(individual, Layers)
+    creep_ga = MLP(pop[0], Layers)
     while world.all_not_crashed :
         for event in pygame.event.get():
             if event.type == QUIT:
                 exit()
-        for idx, reading in enumerate(world.get_reading()):
-            creep_ga[idx].forward(reading)
-        action=np.vstack([np.argmax(creep_ga_one.p) for creep_ga_one in creep_ga])
+
+        creep_ga.forward(world.get_reading()[0])
+        action=[np.argmax(creep_ga.p)]
         # action = np.random.randint(0, 3, (POP_SIZE))
         # print(world.get_distance().max())
         text="max distance:"+str(world.get_distance().max())
@@ -73,14 +71,14 @@ while True:
         generation += 1
 
         print("generation",generation,text,"mean distance:",world.get_distance().mean())
-        distances=world.get_distance()
-        ga.evolve(distances)
+        # distances=world.get_distance()
+        # ga.evolve(distances)
         world = World()
         # train_historys = np.load("data/train_historys_map7_2(9, 15,8, 3).npy")
         # train_history = np.hstack((distances.mean(),distances.max()))
         # train_historys = np.vstack((train_historys, train_history))
         # np.save("data/train_historys_map7_2(9, 15,8, 3).npy", train_historys)
         # np.save("data/parameter_EXB_train_2.npy", ga.pop)
-        for creep_no in range(POP_SIZE):
-            creep = CREEP(world, creep_image, [start[0], start[1]], speed=2, direction=90+np.random.rand())
-            world.add_entity(creep)
+        # for creep_no in range(POP_SIZE):
+        creep = CREEP(world, creep_image, [start[0], start[1]], speed=2, direction=90+np.random.rand())
+        world.add_entity(creep)
